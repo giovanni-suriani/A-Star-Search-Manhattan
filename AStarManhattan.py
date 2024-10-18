@@ -71,4 +71,4 @@ def a_star():
     graph = Graph(initial_vertex)
     print(graph)
     
-a_star()
+a_star()ffa

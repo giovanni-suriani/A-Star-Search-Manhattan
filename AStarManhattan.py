@@ -3,7 +3,8 @@ from queue import LifoQueue, Queue
 
 
 IDEAL_BOARD = ['_','1','2','3','4','5','6','7','8']
-
+TEST_BOARD2 = ['1','2','3','4','5','6','7','8','_']
+TEST_BOARD = ['7','2','4','5','_','6','8','3','1']
 
 
 class PriorityQueue:
@@ -24,29 +25,43 @@ class PriorityQueue:
     
     def __repr__(self):
         return str(self._queue)
-    
-class Vertex:
-        def __init__(self, board_config: list, predecessor = None):
-            self.board_config = board_config
-            self.visited = False
-            self.predecessor: Vertex = predecessor
-            self.heuristic = self.calculate_heuristic(IDEAL_BOARD) 
-            
-        def calculate_heuristic(self):
-            if IDEAL_BOARD is None:
-                raise ValueError("Heuristic was not defined")
-            return 1
-        
-        @property
-        def total_cost(self):
-            return 1 + self.heuristic
-        
-        def clone(self):
-            return Vertex(self.board_config, self.predecessor)
 
-        def __str__(self):
-            board_str = str(self.board_config[:3]) + "\n" + str(self.board_config[3:6]) + "\n" + str(self.board_config[6:])
-            return board_str + "\n" + "Cost = 1 + " + str(self.heuristic)
+class Vertex:
+    def __init__(self, board_config: list, predecessor=None):
+        self.board_config = board_config
+        self.visited = False
+        self.predecessor: Vertex = predecessor
+        self.heuristic = self.calculate_heuristic()
+        if predecessor:
+            self.cost_g = 1 + predecessor.cost_g
+        else:
+            self.cost_g = 0
+
+    def calculate_heuristic(self):
+        def calculate_heuristic_each_piece(piece):
+            if piece == '_':
+                return 0
+            place_at_board = self.board_config.index(piece)
+            ideal_place = IDEAL_BOARD.index(piece)
+            y_distance = abs(ideal_place // 3 - place_at_board // 3)  # Floor division
+            x_distance = abs(place_at_board % 3 - ideal_place % 3)
+            return x_distance + y_distance
+        if IDEAL_BOARD is None:
+            raise ValueError("Heuristic was not defined")
+        return sum([calculate_heuristic_each_piece(piece) for piece in self.board_config])
+
+    @property
+    def total_cost(self):
+        # g(n) + h(n)
+        return self.cost_g + self.heuristic
+
+    def clone(self):
+        return Vertex(self.board_config, self.predecessor)
+
+    def __str__(self):
+        board_str = str(self.board_config[:3]) + "\n" + str(self.board_config[3:6]) + "\n" + str(self.board_config[6:])
+        return board_str + "\n" + "f(n) = " + str(self.cost_g) + " + " + str(self.heuristic)
+
 class Graph:
     def __init__(self, initial_board_config:Vertex):
         self.initial_board_config = initial_board_config
@@ -64,11 +79,11 @@ class Graph:
     
     def __repr__(self):
         return self.str
-    
-    
+
+
 def a_star():
-    initial_vertex = Vertex(IDEAL_BOARD)
+    initial_vertex = Vertex(TEST_BOARD)
     graph = Graph(initial_vertex)
     print(graph)
-    
+
 a_star()

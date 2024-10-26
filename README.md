@@ -1,1 +1,3 @@
 O algoritmo de busca A* é um algoritmo de busca de caminho em grafos que combina a busca em largura com uma heurística para tentar melhorar a eficiência da busca. Ele é usado para encontrar o caminho mais curto entre dois vértices em um grafo, levando em consideração o custo do caminho já percorrido e uma estimativa do custo restante até o destino. Utilizado em problemas de rotas e otimização!
+
+Feito por: giovanni-suriani e ana-reiis
